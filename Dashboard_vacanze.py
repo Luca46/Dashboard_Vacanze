@@ -6,8 +6,15 @@ import pandas as pd
 import streamlit as st
 st.set_page_config(layout="wide")
 
-service_account=gspread.service_account(filename=r'C:\Users\puglisil\OneDrive - UPMC\Documents\File\Personale\Tutto_Python_fatto_da_me\Esercizi_Progetti_Programmazione_Pacchetti\Progetto_Vacanza\chiave.json')
-nome_foglio=service_account.open('Vacanze Zafferana Etnea 6-9 Agosto  2026  (Risposte)').sheet1
+if "gcp_service_account" in st.secrets:
+    # SIAMO ONLINE: Usiamo i dati incollati nel box Secrets
+    credentials = dict(st.secrets["gcp_service_account"])
+    service_account = gspread.service_account_from_dict(credentials)
+else:
+    # SIAMO SUL TUO PC: Usiamo il percorso locale di OneDrive
+    path = r'C:\Users\puglisil\OneDrive - UPMC\Documents\File\Personale\Tutto_Python_fatto_da_me\Esercizi_Progetti_Programmazione_Pacchetti\Progetto_Vacanza\chiave.json'
+    service_account = gspread.service_account(filename=path)
+
 dizionario=nome_foglio.get_all_records()
 df=pd.DataFrame(dizionario)
 groupby_stanze=df.groupby('Tipologia Stanza').agg(Tipologia_Stanza= ('Tipologia Stanza','count'))
