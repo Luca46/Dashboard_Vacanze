@@ -40,24 +40,41 @@ nome_foglio = service_account.open_by_key('1Ti60AlQgYqOUlFQOjKOSGzp4OVmgdiMTpnM8
 dizionario=nome_foglio.get_all_records()
 
 df=pd.DataFrame(dizionario)
+
 df=df[['Cognome Nome Adulto 1','Cognome Nome Adulto 2','Cognome Nome Adulto 3','Cognome Nome Adulto 4','Cognome Nome Adulto 5','Cognome Nome Ragazzo Bambino 1','Cognome Nome Ragazzo Bambino 2','Cognome Nome Ragazzo Bambino 3','Cognome Nome Ragazzo Bambino 4','Cognome Nome Ragazzo Bambino 5','Tipologia Stanza']]
+
+df['Adulto_1']=df['Cognome Nome Adulto 1']
+df['Adulto_2']=df['Cognome Nome Adulto 2']
+df['Adulto_3']=df['Cognome Nome Adulto 3']
+df['Adulto_4']=df['Cognome Nome Adulto 4']
+df['Adulto_5']=df['Cognome Nome Adulto 5']
+
+df['Ragazzo_Bambino_1']=df['Cognome Nome Ragazzo Bambino 1']
+df['Ragazzo_Bambino_2']=df['Cognome Nome Ragazzo Bambino 2']
+df['Ragazzo_Bambino_3']=df['Cognome Nome Ragazzo Bambino 3']
+df['Ragazzo_Bambino_4']=df['Cognome Nome Ragazzo Bambino 4']
+df['Ragazzo_Bambino_5']=df['Cognome Nome Ragazzo Bambino 5']
+
+df=df.drop(['Cognome Nome Adulto 1','Cognome Nome Adulto 2','Cognome Nome Adulto 3','Cognome Nome Adulto 4','Cognome Nome Adulto 5','Cognome Nome Ragazzo Bambino 1','Cognome Nome Ragazzo Bambino 2','Cognome Nome Ragazzo Bambino 3','Cognome Nome Ragazzo Bambino 4','Cognome Nome Ragazzo Bambino 5'],axis=1)
+
+
 groupby_stanze=df.groupby('Tipologia Stanza').agg(Tipologia_Stanza= ('Tipologia Stanza','count'))
 count_stanze=df['Tipologia Stanza'].value_counts()
 
 
-iscritti_adulti1=len(df['Cognome Nome Adulto 1'])
-iscritti_adulti2=len(df[df['Cognome Nome Adulto 2']!='']['Cognome Nome Adulto 2'])
-iscritti_adulti3=len(df[df['Cognome Nome Adulto 3']!='']['Cognome Nome Adulto 3'])
-iscritti_adulti4=len(df[df['Cognome Nome Adulto 4']!='']['Cognome Nome Adulto 4'])
-iscritti_adulti5=len(df[df['Cognome Nome Adulto 5']!='']['Cognome Nome Adulto 5'])
+iscritti_adulti1=len(df['Adulto_1'])
+iscritti_adulti2=len(df[df['Adulto_2']!='']['Adulto_2'])
+iscritti_adulti3=len(df[df['Adulto_3']!='']['Adulto_3'])
+iscritti_adulti4=len(df[df['Adulto_4']!='']['Adulto_4'])
+iscritti_adulti5=len(df[df['Adulto_5']!='']['Adulto_5'])
 
 iscritti_adulti= iscritti_adulti1+iscritti_adulti2+iscritti_adulti3+iscritti_adulti4+iscritti_adulti5
 
-iscritti_bambini_1=len(df[df['Cognome Nome Ragazzo Bambino 1']!='']['Cognome Nome Ragazzo Bambino 1'])
-iscritti_bambini_2=len(df[df['Cognome Nome Ragazzo Bambino 2']!='']['Cognome Nome Ragazzo Bambino 2'])
-iscritti_bambini_3=len(df[df['Cognome Nome Ragazzo Bambino 3']!='']['Cognome Nome Ragazzo Bambino 3'])
-iscritti_bambini_4=len(df[df['Cognome Nome Ragazzo Bambino 4']!='']['Cognome Nome Ragazzo Bambino 4'])
-iscritti_bambini_5=len(df[df['Cognome Nome Ragazzo Bambino 5']!='']['Cognome Nome Ragazzo Bambino 5'])
+iscritti_bambini_1=len(df[df['Ragazzo_Bambino_1']!='']['Ragazzo_Bambino_1'])
+iscritti_bambini_2=len(df[df['Ragazzo_Bambino_2']!='']['Ragazzo_Bambino_2'])
+iscritti_bambini_3=len(df[df['Ragazzo_Bambino_3']!='']['Ragazzo_Bambino_3'])
+iscritti_bambini_4=len(df[df['Ragazzo_Bambino_4']!='']['Ragazzo_Bambino_4'])
+iscritti_bambini_5=len(df[df['Ragazzo_Bambino_5']!='']['Ragazzo_Bambino_5'])
 
 iscritti_ragazzi_bambini=iscritti_bambini_1+iscritti_bambini_2+iscritti_bambini_3+iscritti_bambini_4+iscritti_bambini_5
 
