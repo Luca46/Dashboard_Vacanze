@@ -21,7 +21,7 @@ else:
     path = r'C:\Users\puglisil\...\chiave.json'
     service_account = gspread.service_account(filename=path)
 
-nome_foglio = service_account.open('Vacanze Zafferana Etnea 6-9 Agosto 2026 (Risposte)').sheet1
+nome_foglio = service_account.open_by_key('1Ti60AlQgYqOUlFQOjKOSGzp4OVmgdiMTpnM8F3FQML4').sheet1
 
 dizionario=nome_foglio.get_all_records()
 df=pd.DataFrame(dizionario)
