@@ -5,26 +5,42 @@ import gspread
 import pandas as pd
 import streamlit as st
 import json
+import os
 
 st.set_page_config(layout="wide")
 
-# Logica di autenticazione
-if "gcp_service_account" in st.secrets:
-    # 1. Leggiamo la stringa di testo dai Secrets
-    stringa_json = st.secrets["gcp_service_account"]["json_string"]
-    # 2. La trasformiamo in un vero dizionario Python
-    dati_credenziali = json.loads(stringa_json)
-    # 3. Passiamo il dizionario a gspread
-    service_account = gspread.service_account_from_dict(dati_credenziali)
+st.set_page_config(layout="wide")
+
+# Tentativo di recupero credenziali
+creds_dict = None
+
+# 1. Prova a vedere se siamo su Streamlit Cloud
+try:
+    if "gcp_service_account" in st.secrets:
+        # Se siamo su Streamlit, usiamo i Secrets
+        creds_dict = json.loads(st.secrets["gcp_service_account"]["json_string"])
+except Exception:
+    # Se NON siamo su Streamlit (es. Notebook), st.secrets darà errore. 
+    # Python entrerà qui e noi gli diciamo di ignorare l'errore.
+    pass
+
+# 2. Se non abbiamo trovato nulla nei Secrets, cerchiamo il file locale
+if creds_dict is None:
+    path_locale = r'C:\Users\puglisil\OneDrive - UPMC\Documents\File\Personale\Tutto_Python_fatto_da_me\Esercizi_Progetti_Programmazione_Pacchetti\Progetto_Vacanza\chiave.json'
+    if os.path.exists(path_locale):
+        service_account = gspread.service_account(filename=path_locale)
+    else:
+        print("Errore: Chiave non trovata né nei Secrets né in locale!")
 else:
-    # Codice per il tuo PC (OneDrive)
-    path = r'C:\Users\puglisil\...\chiave.json'
-    service_account = gspread.service_account(filename=path)
+    # Se abbiamo le credenziali dai Secrets, usiamo quelle
+    service_account = gspread.service_account_from_dict(creds_dict)
 
 nome_foglio = service_account.open_by_key('1Ti60AlQgYqOUlFQOjKOSGzp4OVmgdiMTpnM8F3FQML4').sheet1
 
 dizionario=nome_foglio.get_all_records()
+
 df=pd.DataFrame(dizionario)
+df=df[['Cognome Nome Adulto 1','Cognome Nome Adulto 2','Cognome Nome Adulto 3','Cognome Nome Adulto 4','Cognome Nome Adulto 5','Cognome Nome Ragazzo Bambino 1','Cognome Nome Ragazzo Bambino 2','Cognome Nome Ragazzo Bambino 3','Cognome Nome Ragazzo Bambino 4','Cognome Nome Ragazzo Bambino 5','Tipologia Stanza']]
 groupby_stanze=df.groupby('Tipologia Stanza').agg(Tipologia_Stanza= ('Tipologia Stanza','count'))
 count_stanze=df['Tipologia Stanza'].value_counts()
 
@@ -35,13 +51,16 @@ iscritti_adulti3=len(df[df['Cognome Nome Adulto 3']!='']['Cognome Nome Adulto 3'
 iscritti_adulti4=len(df[df['Cognome Nome Adulto 4']!='']['Cognome Nome Adulto 4'])
 iscritti_adulti5=len(df[df['Cognome Nome Adulto 5']!='']['Cognome Nome Adulto 5'])
 
+iscritti_adulti= iscritti_adulti1+iscritti_adulti2+iscritti_adulti3+iscritti_adulti4+iscritti_adulti5
+
 iscritti_bambini_1=len(df[df['Cognome Nome Ragazzo Bambino 1']!='']['Cognome Nome Ragazzo Bambino 1'])
 iscritti_bambini_2=len(df[df['Cognome Nome Ragazzo Bambino 2']!='']['Cognome Nome Ragazzo Bambino 2'])
 iscritti_bambini_3=len(df[df['Cognome Nome Ragazzo Bambino 3']!='']['Cognome Nome Ragazzo Bambino 3'])
 iscritti_bambini_4=len(df[df['Cognome Nome Ragazzo Bambino 4']!='']['Cognome Nome Ragazzo Bambino 4'])
 iscritti_bambini_5=len(df[df['Cognome Nome Ragazzo Bambino 5']!='']['Cognome Nome Ragazzo Bambino 5'])
-iscritti_adulti= iscritti_adulti1+iscritti_adulti2+iscritti_adulti3+iscritti_adulti4+iscritti_adulti5
+
 iscritti_ragazzi_bambini=iscritti_bambini_1+iscritti_bambini_2+iscritti_bambini_3+iscritti_bambini_4+iscritti_bambini_5
+
 iscritti_totali=iscritti_adulti+iscritti_ragazzi_bambini
 
 st.title('Dashboard vacanze Zafferana Etnea')
