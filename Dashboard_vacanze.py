@@ -4,16 +4,24 @@
 import gspread
 import pandas as pd
 import streamlit as st
+import json
+
 st.set_page_config(layout="wide")
 
+# Logica di autenticazione
 if "gcp_service_account" in st.secrets:
-    # SIAMO ONLINE: Usiamo i dati incollati nel box Secrets
-    credentials = dict(st.secrets["gcp_service_account"])
-    service_account = gspread.service_account_from_dict(credentials)
+    # 1. Leggiamo la stringa di testo dai Secrets
+    stringa_json = st.secrets["gcp_service_account"]["json_string"]
+    # 2. La trasformiamo in un vero dizionario Python
+    dati_credenziali = json.loads(stringa_json)
+    # 3. Passiamo il dizionario a gspread
+    service_account = gspread.service_account_from_dict(dati_credenziali)
 else:
-    # SIAMO SUL TUO PC: Usiamo il percorso locale di OneDrive
-    path = r'C:\Users\puglisil\OneDrive - UPMC\Documents\File\Personale\Tutto_Python_fatto_da_me\Esercizi_Progetti_Programmazione_Pacchetti\Progetto_Vacanza\chiave.json'
+    # Codice per il tuo PC (OneDrive)
+    path = r'C:\Users\puglisil\...\chiave.json'
     service_account = gspread.service_account(filename=path)
+
+nome_foglio = service_account.open('Vacanze Zafferana Etnea 6-9 Agosto 2026 (Risposte)').sheet1
 
 dizionario=nome_foglio.get_all_records()
 df=pd.DataFrame(dizionario)
